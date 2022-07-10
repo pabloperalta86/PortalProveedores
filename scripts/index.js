@@ -31,6 +31,7 @@ window.addEventListener('load',function(){
 function validarCUIT(p){
     let cuit = document.getElementById(p).value;
 	if (cuit.length != 13) {
+        document.getElementById(p).style.color = "red";
         alert("El CUIT ingresado no es valido no tiene 13 caracteres.")
         return 0;
     }
