@@ -1,0 +1,43 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+.bodyIndex {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: "encabezado encabezado encabezado" 
+                        "main main main" 
+                        "footer footer footer";
+}
+
+.encabezadoIndex {
+    grid-area: encabezado;
+}  
+
+.mainIndex {
+    grid-area: main;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "datos pdf" 
+                        "datos pdf";
+}
+
+.footerIndex {
+    grid-area: footer;
+}
+
+.embedPdf {
+    grid-area: pdf;
+}
+
+.datos {
+    grid-area: datos;
+    display: flex;
+    flex-direction: column;
+    width: 80%;  
+    margin-left: auto; 
+    margin-right: auto; 
+}
