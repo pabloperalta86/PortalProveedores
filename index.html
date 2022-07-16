@@ -5,6 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/style.css">
+
+    <script type="text/javascript" src="./scripts/js/file_demo_only/jsQR.js"></script>
+    <script type="text/javascript" src="./scripts/js/file_demo_only/pdf.min.js"></script>
+    <script type="text/javascript" src="./scripts/js/file_demo_only/pdf-qr.js"></script>
+    <!-- <script type="text/javascript" src="./scripts/js/app.js"></script> -->
+
     <title>Portal Proveedores</title>
 </head>
 <body class="bodyIndex">
@@ -27,6 +33,8 @@
                 </select>
             </p>
             <input type="number" step="0.01" name="importe" id="importe" placeholder="Importe">
+            <textarea name="resultado" id="resultado" cols="75" rows="15"></textarea>
+            <textarea name="resultadoDecodificado" id="resultadoDecodificado" cols="75" rows="15"></textarea>
             <input type="submit" value="Guardar" id="guardar">
         
         </div>
