@@ -5,16 +5,25 @@
 
 .bodyIndex {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: auto 1fr 1fr;
     grid-template-rows: auto 1fr auto;
-    grid-template-areas: "encabezado encabezado encabezado" 
-                        "main main main" 
-                        "footer footer footer";
-}
+    grid-template-areas: "encabezado main main" 
+                        "encabezado main main" 
+                        "encabezado footer footer";
+    background-color: rgba(0, 0, 0, .1);
+                    }
 
 .encabezadoIndex {
     grid-area: encabezado;
 }  
+
+input{
+    margin-bottom: 10px;
+}
+
+#cotizacion{
+    margin-bottom: 10px;
+}
 
 .mainIndex {
     grid-area: main;
@@ -27,6 +36,7 @@
 
 .footerIndex {
     grid-area: footer;
+    background-color: aqua;
 }
 
 .embedPdf {

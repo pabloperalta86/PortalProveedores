@@ -1,3 +1,14 @@
+const selectComprobantes = document.getElementById("tipoComprobante")
+
+tiposComprobantesAfip.forEach(function(item,index) {
+    selectComprobantes.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+});
+
+const selectMonedas = document.getElementById("moneda")
+monedasAfip.forEach(function(item,index) {
+    selectMonedas.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+});
+
 function cargarArchivo(p,p1){
     if (document.getElementById(p1).files[0] !== undefined) {
         document.getElementById(p).src = URL.createObjectURL(document.getElementById(p1).files[0]);
@@ -26,7 +37,7 @@ function cargarArchivo(p,p1){
             document.getElementById("resultado").innerText = result.codes[0].replace("https://www.afip.gob.ar/fe/qr/?p=","");
             let decodificadoB64 = atob(document.getElementById("resultado").value);
             console.log(typeof decodificadoB64);
-            document.getElementById("resultadoDecodificado").innerText = decodificadoB64;
+            document.getElementById("resultadoDecodificado").value = decodificadoB64;
             console.log(decodificadoB64);
             let datosComprobante = JSON.parse(decodificadoB64);
 
