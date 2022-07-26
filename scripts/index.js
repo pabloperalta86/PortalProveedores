@@ -1,22 +1,115 @@
-const selectComprobantes = document.getElementById("tipoComprobante")
+const inputArchivo = document.getElementById("archivo");
+const inputNumeroComprobante = document.getElementById("numeroComprobante");
+const inputCuit = document.getElementById("cuit");
+const inputGuardar = document.getElementById("guardar");
+const inputVerGuardados = document.getElementById("verGuardados");
+const inputTipoComprobante = document.getElementById("tipoComprobante");
+const inputMoneda = document.getElementById("moneda");
+const visorPdf = document.getElementById("visorPdf");
+
 
 tiposComprobantesAfip.forEach(function(item,index) {
-    selectComprobantes.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+    inputTipoComprobante.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
 });
 
-const selectMonedas = document.getElementById("moneda")
 monedasAfip.forEach(function(item,index) {
-    selectMonedas.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+    inputMoneda.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
 });
 
-function cargarArchivo(p,p1){
-    if (document.getElementById(p1).files[0] !== undefined) {
-        document.getElementById(p).src = URL.createObjectURL(document.getElementById(p1).files[0]);
+const comprobantesGuardados = [];
+
+inputGuardar.onclick = () => {
+    // falta funcion valida que esten todos los campos completos y con datos validos
+    // falta funcion para borrar todos los campos despues de guardar
+
+    const numeroComprobante = document.getElementById("numeroComprobante").value;
+    const fechaComprobante = document.getElementById("fechaComprobante").value;
+    const tipoComprobante = document.getElementById("tipoComprobante").value;
+    const cuit = document.getElementById("cuit").value;
+    const nroAutorizacion = document.getElementById("nroAutorizacion").value;
+    const moneda = document.getElementById("moneda").value;
+    const cotizacion = document.getElementById("cotizacion").value;
+    const importe = document.getElementById("importe").value;
+
+    const nuevoComprobante = new Comprobante(numeroComprobante, fechaComprobante, tipoComprobante, cuit, nroAutorizacion, moneda, cotizacion, importe);
+    comprobantesGuardados.push(nuevoComprobante);
+}
+
+inputVerGuardados.onclick = () => {    
+    console.log("Todos los comprobantes:", comprobantesGuardados);
+    const comprobantesGuardadosDolares = comprobantesGuardados.filter(actual => actual.moneda === "DOL");
+    console.log("Comprobantes en Dolares:", comprobantesGuardadosDolares);
+    const comprobantesGuardadosPesos = comprobantesGuardados.filter(actual => actual.moneda === "PES");
+    console.log("Comprobantes en Pesos:", comprobantesGuardadosPesos);
+    console.log("Total de Comprobantes guardados:", comprobantesGuardados.length);
+    comprobantesGuardados.forEach((actual, i) => {
+        if (actual.importe > 10000) {
+            console.log(`El comprobante: ${actual.numeroComprobante} es mayor a 10,000.00`)
+        }
+    })
+}
+
+inputCuit.onchange = () => {
+    let cuit = inputCuit.value;
+	if (cuit.length != 13) {
+        inputCuit.style.color = "red";
+        alert("El CUIT ingresado no es valido no tiene 13 caracteres.");
+        return 0;
+    }
+		
+	let cuitValido = false;
+	let resultado = 0;
+	let cuit_nro = cuit.replace("-", "");
+	let codigo = "6789456789";
+	let verificador = parseInt(cuit_nro[cuit_nro.length-1]);
+
+	for (let x= 0; x < 10; x++) {
+		let digitoValidador = parseInt(codigo.substring(x, x+1));
+		if (isNaN(digitoValidador)) digitoValidador = 0;
+		let digito = parseInt(cuit_nro.substring(x, x+1));
+		if (isNaN(digito)) digito = 0;
+		let digitoValidacion = digitoValidador * digito;
+		resultado += digitoValidacion;
+	}
+	
+    resultado = resultado % 11;
+	cuitValido = (resultado == verificador);
+	
+    if (cuitValido == false) {
+        inputCuit.style.color = "red";
+        alert("El CUIT ingresado no es valido, debe revisarlo.");
+        return cuitValido;
+    }            
+    else {
+        inputCuit.style.color = "black";
+    }
+}
+
+inputNumeroComprobante.onchange = () => {
+    let nroComprobante = inputNumeroComprobante.value;
+    if (nroComprobante.includes("-")) {
+        let nroSeparado = nroComprobante.split("-");
+        let puntoventa = "00000" + nroSeparado[0];
+        let numero = "00000000" + nroSeparado[1];
+        inputNumeroComprobante.value = puntoventa.substring(puntoventa.length - 5, puntoventa.length) + numero.substring(numero.length - 8, numero.length)
+        inputNumeroComprobante.style.color = "black";
+    } else if (nroComprobante.length !== 13) {
+        inputNumeroComprobante.style.color = "red";
+        alert("El numero ingresado debe tener 13 caracteres.");    
+    } else {
+        inputNumeroComprobante.style.color = "black";
+    }
+}
+
+
+inputArchivo.onchange = () => {
+    if (inputArchivo.files[0] !== undefined) {
+        visorPdf.src = URL.createObjectURL(inputArchivo.files[0]);
         document.getElementById("resultado").innerText = "Escaneando codigo QR...";
     } else {
         return;
     }
-    
+
     let configuraciones = {
         scale: {
             once: true,
@@ -29,8 +122,9 @@ function cargarArchivo(p,p1){
         jsQR: {}
     };
     
-    let archivo = document.getElementById(p).src;
+    let archivo = visorPdf.src;
     
+
     let callback = function (result) {
         if (result.success) {
             console.log(result.codes);
@@ -72,8 +166,9 @@ function cargarArchivo(p,p1){
     }
     
     PDF_QR_JS.decodeSinglePage(archivo, 1, configuraciones, callback);    
+    
+};
 
-}
 
 // api para leer qr desde una imagen
 // function cargarArchivo2(p,p1){
@@ -120,41 +215,6 @@ window.addEventListener('load',function(){
     });
 });
 
-function validarCUIT(p){
-    let cuit = document.getElementById(p).value;
-	if (cuit.length != 13) {
-        document.getElementById(p).style.color = "red";
-        alert("El CUIT ingresado no es valido no tiene 13 caracteres.")
-        return 0;
-    }
-		
-	let cuitValido = false;
-	let resultado = 0;
-	let cuit_nro = cuit.replace("-", "");
-	let codigo = "6789456789";
-	let verificador = parseInt(cuit_nro[cuit_nro.length-1]);
-
-	for (let x= 0; x < 10; x++) {
-		let digitoValidador = parseInt(codigo.substring(x, x+1));
-		if (isNaN(digitoValidador)) digitoValidador = 0;
-		let digito = parseInt(cuit_nro.substring(x, x+1));
-		if (isNaN(digito)) digito = 0;
-		let digitoValidacion = digitoValidador * digito;
-		resultado += digitoValidacion;
-	}
-	
-    resultado = resultado % 11;
-	cuitValido = (resultado == verificador);
-	
-    if (cuitValido == false) {
-        document.getElementById(p).style.color = "red";
-        alert("El CUIT ingresado no es valido, debe revisarlo.")
-        return cuitValido;
-    }            
-    else {
-        document.getElementById(p).style.color = "black"
-    }
-}
 
 class Comprobante {
     constructor(numeroComprobante, fechaComprobante, tipoComprobante, cuit, nroAutorizacion, moneda, cotizacion, importe) {
@@ -167,38 +227,4 @@ class Comprobante {
     this.cotizacion        = cotizacion;
     this.importe           = importe;
     }
-}
-
-const comprobantesGuardados = [];
-
-function guardarComprobante(){
-    // falta funcion valida que esten todos los campos completos y con datos validos
-    // falta funcion para borrar todos los campos despues de guardar
-
-    const numeroComprobante = document.getElementById("numeroComprobante").value;
-    const fechaComprobante = document.getElementById("fechaComprobante").value;
-    const tipoComprobante = document.getElementById("tipoComprobante").value;
-    const cuit = document.getElementById("cuit").value;
-    const nroAutorizacion = document.getElementById("nroAutorizacion").value;
-    const moneda = document.getElementById("moneda").value;
-    const cotizacion = document.getElementById("cotizacion").value;
-    const importe = document.getElementById("importe").value;
-
-    const nuevoComprobante = new Comprobante(numeroComprobante, fechaComprobante, tipoComprobante, cuit, nroAutorizacion, moneda, cotizacion, importe);
-    comprobantesGuardados.push(nuevoComprobante);
-}
-
-
-function verComprobantesGuardados(){
-    console.log("Todos los comprobantes:", comprobantesGuardados);
-    const comprobantesGuardadosDolares = comprobantesGuardados.filter(actual => actual.moneda === "DOL");
-    console.log("Comprobantes en Dolares:", comprobantesGuardadosDolares);
-    const comprobantesGuardadosPesos = comprobantesGuardados.filter(actual => actual.moneda === "PES");
-    console.log("Comprobantes en Pesos:", comprobantesGuardadosPesos);
-    console.log("Total de Comprobantes guardados:", comprobantesGuardados.length);
-    comprobantesGuardados.forEach((actual, i) => {
-        if (actual.importe > 10000) {
-            console.log(`El comprobante: ${actual.numeroComprobante} es mayor a 10,000.00`)
-        }
-    })
 }

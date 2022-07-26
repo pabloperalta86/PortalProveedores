@@ -284,6 +284,7 @@ var PDF_QR_JS = (function () {
     }
 
     function decodeSinglePage(input, pageNr, configs, final_call_back, page_printer) {
+
         decoder({
             input: input,
             singlePage: true,
