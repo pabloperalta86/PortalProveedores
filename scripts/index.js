@@ -1,12 +1,16 @@
 const inputArchivo = document.getElementById("archivo");
+const formulario = document.getElementById("formulario");
 const inputNumeroComprobante = document.getElementById("numeroComprobante");
+const inputFechaComprobante = document.getElementById("fechaComprobante");
 const inputCuit = document.getElementById("cuit");
 const inputGuardar = document.getElementById("guardar");
 const inputVerGuardados = document.getElementById("verGuardados");
 const inputTipoComprobante = document.getElementById("tipoComprobante");
 const inputMoneda = document.getElementById("moneda");
 const visorPdf = document.getElementById("visorPdf");
-
+const inputNroAutorizacion = document.getElementById("nroAutorizacion");
+const inputCotizacion = document.getElementById("cotizacion");
+const inputImporte = document.getElementById("importe");
 
 tiposComprobantesAfip.forEach(function(item,index) {
     inputTipoComprobante.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
@@ -18,21 +22,22 @@ monedasAfip.forEach(function(item,index) {
 
 const comprobantesGuardados = [];
 
-inputGuardar.onclick = () => {
+formulario.onsubmit = (event) =>{
+    event.preventDefault();
     // falta funcion valida que esten todos los campos completos y con datos validos
     // falta funcion para borrar todos los campos despues de guardar
 
-    const numeroComprobante = document.getElementById("numeroComprobante").value;
-    const fechaComprobante = document.getElementById("fechaComprobante").value;
-    const tipoComprobante = document.getElementById("tipoComprobante").value;
-    const cuit = document.getElementById("cuit").value;
-    const nroAutorizacion = document.getElementById("nroAutorizacion").value;
-    const moneda = document.getElementById("moneda").value;
-    const cotizacion = document.getElementById("cotizacion").value;
-    const importe = document.getElementById("importe").value;
-
+    const numeroComprobante = inputNumeroComprobante.value;
+    const fechaComprobante = inputFechaComprobante.value;
+    const tipoComprobante = inputTipoComprobante.value;
+    const cuit = inputCuit.value;
+    const nroAutorizacion = inputNroAutorizacion.value;
+    const moneda = inputMoneda.value;
+    const cotizacion = inputCotizacion.value;
+    const importe = inputImporte.value;
     const nuevoComprobante = new Comprobante(numeroComprobante, fechaComprobante, tipoComprobante, cuit, nroAutorizacion, moneda, cotizacion, importe);
     comprobantesGuardados.push(nuevoComprobante);
+    formulario.reset();
 }
 
 inputVerGuardados.onclick = () => {    
@@ -105,7 +110,7 @@ inputNumeroComprobante.onchange = () => {
 inputArchivo.onchange = () => {
     if (inputArchivo.files[0] !== undefined) {
         visorPdf.src = URL.createObjectURL(inputArchivo.files[0]);
-        document.getElementById("resultado").innerText = "Escaneando codigo QR...";
+        document.getElementById("resultado").value = "Escaneando codigo QR...";
     } else {
         return;
     }
@@ -128,7 +133,7 @@ inputArchivo.onchange = () => {
     let callback = function (result) {
         if (result.success) {
             console.log(result.codes);
-            document.getElementById("resultado").innerText = result.codes[0].replace("https://www.afip.gob.ar/fe/qr/?p=","");
+            document.getElementById("resultado").value = result.codes[0].replace("https://www.afip.gob.ar/fe/qr/?p=","");
             let decodificadoB64 = atob(document.getElementById("resultado").value);
             console.log(typeof decodificadoB64);
             document.getElementById("resultadoDecodificado").value = decodificadoB64;
@@ -161,7 +166,7 @@ inputArchivo.onchange = () => {
             console.log(datosComprobante.codAut);
         } else {
             console.log(result.message);
-            document.getElementById("resultado").innerText = result.message;
+            document.getElementById("resultado").value = result.message;
         }
     }
     
