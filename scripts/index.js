@@ -1,3 +1,10 @@
+const nuevoLogin = {usuario:"pperalta",contrasenia:"123"}
+const storageLoginPortal = [];
+storageLoginPortal.push(nuevoLogin);
+localStorage.setItem("loginPortal", JSON.stringify(storageLoginPortal))
+
+if (sessionStorage.getItem("usuarioActivo") != "true") window.location.href = "./pages/iniciarSesion.html"
+
 const inputArchivo = document.getElementById("archivo");
 const formulario = document.getElementById("formulario");
 const inputNumeroComprobante = document.getElementById("numeroComprobante");
@@ -20,12 +27,11 @@ monedasAfip.forEach(function(item,index) {
     inputMoneda.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
 });
 
-const comprobantesGuardados = [];
+const comprobantesGuardados = JSON.parse(localStorage.getItem("comprobantesGuardados")) || [];
 
 formulario.onsubmit = (event) =>{
     event.preventDefault();
     // falta funcion valida que esten todos los campos completos y con datos validos
-    // falta funcion para borrar todos los campos despues de guardar
 
     const numeroComprobante = inputNumeroComprobante.value;
     const fechaComprobante = inputFechaComprobante.value;
@@ -37,11 +43,12 @@ formulario.onsubmit = (event) =>{
     const importe = inputImporte.value;
     const nuevoComprobante = new Comprobante(numeroComprobante, fechaComprobante, tipoComprobante, cuit, nroAutorizacion, moneda, cotizacion, importe);
     comprobantesGuardados.push(nuevoComprobante);
+    localStorage.setItem("comprobantesGuardados", JSON.stringify(comprobantesGuardados))
     formulario.reset();
 }
 
 inputVerGuardados.onclick = () => {    
-    console.log("Todos los comprobantes:", comprobantesGuardados);
+/*    console.log("Todos los comprobantes:", comprobantesGuardados);
     const comprobantesGuardadosDolares = comprobantesGuardados.filter(actual => actual.moneda === "DOL");
     console.log("Comprobantes en Dolares:", comprobantesGuardadosDolares);
     const comprobantesGuardadosPesos = comprobantesGuardados.filter(actual => actual.moneda === "PES");
@@ -52,6 +59,8 @@ inputVerGuardados.onclick = () => {
             console.log(`El comprobante: ${actual.numeroComprobante} es mayor a 10,000.00`)
         }
     })
+*/
+    window.location.href = "./pages/visualizarComprobantes.html"
 }
 
 inputCuit.onchange = () => {
@@ -154,16 +163,6 @@ inputArchivo.onchange = () => {
             document.getElementById("cotizacion").value = datosComprobante.ctz;
             document.getElementById("importe").value = datosComprobante.importe;
 
-            console.log(datosComprobante.fecha);
-            console.log(datosComprobante.cuit);
-            console.log(datosComprobante.ptoVta);
-            console.log(datosComprobante.tipoCmp);
-            console.log(datosComprobante.nroCmp);
-            console.log(datosComprobante.importe);
-            console.log(datosComprobante.moneda);
-            console.log(datosComprobante.ctz);
-            console.log(datosComprobante.nroDocRec);
-            console.log(datosComprobante.codAut);
         } else {
             console.log(result.message);
             document.getElementById("resultado").value = result.message;
