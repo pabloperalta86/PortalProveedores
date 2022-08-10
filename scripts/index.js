@@ -48,18 +48,6 @@ formulario.onsubmit = (event) =>{
 }
 
 inputVerGuardados.onclick = () => {    
-/*    console.log("Todos los comprobantes:", comprobantesGuardados);
-    const comprobantesGuardadosDolares = comprobantesGuardados.filter(actual => actual.moneda === "DOL");
-    console.log("Comprobantes en Dolares:", comprobantesGuardadosDolares);
-    const comprobantesGuardadosPesos = comprobantesGuardados.filter(actual => actual.moneda === "PES");
-    console.log("Comprobantes en Pesos:", comprobantesGuardadosPesos);
-    console.log("Total de Comprobantes guardados:", comprobantesGuardados.length);
-    comprobantesGuardados.forEach((actual, i) => {
-        if (actual.importe > 10000) {
-            console.log(`El comprobante: ${actual.numeroComprobante} es mayor a 10,000.00`)
-        }
-    })
-*/
     window.location.href = "./pages/visualizarComprobantes.html"
 }
 
@@ -115,7 +103,6 @@ inputNumeroComprobante.onchange = () => {
     }
 }
 
-
 inputArchivo.onchange = () => {
     if (inputArchivo.files[0] !== undefined) {
         visorPdf.src = URL.createObjectURL(inputArchivo.files[0]);
@@ -138,7 +125,6 @@ inputArchivo.onchange = () => {
     
     let archivo = visorPdf.src;
     
-
     let callback = function (result) {
         if (result.success) {
             console.log(result.codes);
