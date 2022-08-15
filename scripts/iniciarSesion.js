@@ -9,7 +9,7 @@ formIngresar.onsubmit = (event) =>{
     event.preventDefault();
     
     if (getLoginPortal.usuario !== inputUsuario.value || getLoginPortal.contrasenia !== inputContrasenia.value) {
-        alert("El usuario/contraseña ingresados no son correctos");
+        swal("Error", "El usuario/contraseña ingresados no son correctos");
         formIngresar.reset();
     } else {
         sessionStorage.setItem("usuarioActivo", true)

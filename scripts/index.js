@@ -45,6 +45,18 @@ formulario.onsubmit = (event) =>{
     comprobantesGuardados.push(nuevoComprobante);
     localStorage.setItem("comprobantesGuardados", JSON.stringify(comprobantesGuardados))
     formulario.reset();
+    Toastify({
+        text: "El comprobante se guardo correctamente",
+        duration: 2500,
+        newWindow: true,
+        close: true,
+        gravity: "bottom", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+            background: "linear-gradient(to right, #0071ff, #03525f)",
+        }
+    }).showToast();
 }
 
 inputVerGuardados.onclick = () => {    
