@@ -1,9 +1,9 @@
+if (sessionStorage.getItem("usuarioActivo") != "true") window.location.href = "./pages/iniciarSesion.html"
+
 const nuevoLogin = {usuario:"pperalta",contrasenia:"123"}
 const storageLoginPortal = [];
 storageLoginPortal.push(nuevoLogin);
 localStorage.setItem("loginPortal", JSON.stringify(storageLoginPortal))
-
-if (sessionStorage.getItem("usuarioActivo") != "true") window.location.href = "./pages/iniciarSesion.html"
 
 const inputArchivo = document.getElementById("archivo");
 const formulario = document.getElementById("formulario");
@@ -19,18 +19,24 @@ const inputNroAutorizacion = document.getElementById("nroAutorizacion");
 const inputCotizacion = document.getElementById("cotizacion");
 const inputImporte = document.getElementById("importe");
 
-tiposComprobantesAfip.forEach(function(item,index) {
-    inputTipoComprobante.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+
+fetch("../data/tipoComprobantes.json").then(response => response.json()).then(jsondata => {
+    jsondata.forEach(function(item,index) {
+        inputTipoComprobante.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+    });
 });
 
-monedasAfip.forEach(function(item,index) {
-    inputMoneda.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+fetch("../data/monedas.json").then(response => response.json()).then(jsondata => {
+    jsondata.forEach(function(item,index) {
+        inputMoneda.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+    });
 });
 
 const comprobantesGuardados = JSON.parse(localStorage.getItem("comprobantesGuardados")) || [];
 
 formulario.onsubmit = (event) =>{
     event.preventDefault();
+    
     // falta funcion valida que esten todos los campos completos y con datos validos
 
     const numeroComprobante = inputNumeroComprobante.value;
@@ -59,15 +65,10 @@ formulario.onsubmit = (event) =>{
     }).showToast();
 }
 
-inputVerGuardados.onclick = () => {    
-    window.location.href = "./pages/visualizarComprobantes.html"
-}
-
-inputCuit.onchange = () => {
+inputCuit.oninput = () => {
     let cuit = inputCuit.value;
-	if (cuit.length != 13) {
-        inputCuit.style.color = "red";
-        alert("El CUIT ingresado no es valido no tiene 13 caracteres.");
+	if (cuit.length != 13 && cuit.length != 11) {
+        inputCuit.classList.replace("is-valid","is-invalid");
         return 0;
     }
 		
@@ -90,12 +91,15 @@ inputCuit.onchange = () => {
 	cuitValido = (resultado == verificador);
 	
     if (cuitValido == false) {
-        inputCuit.style.color = "red";
-        alert("El CUIT ingresado no es valido, debe revisarlo.");
+        inputCuit.classList.replace("is-valid","is-invalid");
         return cuitValido;
-    }            
-    else {
-        inputCuit.style.color = "black";
+    } else {
+        if (cuit.length === 11){
+            console.log(inputCuit,"pepe")
+            cuit = cuit.substring(0,2) + "-" + cuit.substring(2, 10) + "-" + cuit.substring(10,11)
+            inputCuit.value = cuit
+        }
+        inputCuit.classList.replace("is-invalid","is-valid");
     }
 }
 
@@ -106,12 +110,11 @@ inputNumeroComprobante.onchange = () => {
         let puntoventa = "00000" + nroSeparado[0];
         let numero = "00000000" + nroSeparado[1];
         inputNumeroComprobante.value = puntoventa.substring(puntoventa.length - 5, puntoventa.length) + numero.substring(numero.length - 8, numero.length)
-        inputNumeroComprobante.style.color = "black";
+        inputNumeroComprobante.classList.replace("is-invalid","is-valid");
     } else if (nroComprobante.length !== 13) {
-        inputNumeroComprobante.style.color = "red";
-        alert("El numero ingresado debe tener 13 caracteres.");    
+        inputNumeroComprobante.classList.replace("is-valid","is-invalid");
     } else {
-        inputNumeroComprobante.style.color = "black";
+        inputNumeroComprobante.classList.replace("is-invalid","is-valid");
     }
 }
 
@@ -139,30 +142,24 @@ inputArchivo.onchange = () => {
     
     let callback = function (result) {
         if (result.success) {
-            console.log(result.codes);
             document.getElementById("resultado").value = result.codes[0].replace("https://www.afip.gob.ar/fe/qr/?p=","");
             let decodificadoB64 = atob(document.getElementById("resultado").value);
-            console.log(typeof decodificadoB64);
             document.getElementById("resultadoDecodificado").value = decodificadoB64;
-            console.log(decodificadoB64);
             let datosComprobante = JSON.parse(decodificadoB64);
 
-            document.getElementById("numeroComprobante").value = datosComprobante.ptoVta + "-" + datosComprobante.nroCmp;
+            inputNumeroComprobante.value = datosComprobante.ptoVta + "-" + datosComprobante.nroCmp;
             validarNroComprobante("numeroComprobante");
-            document.getElementById("fechaComprobante").value = datosComprobante.fecha;
-            
+            inputFechaComprobante.value = datosComprobante.fecha;
             let tipoDeComprobante = "000" + datosComprobante.tipoCmp;
             tipoDeComprobante = tipoDeComprobante.substring(tipoDeComprobante.length-3,tipoDeComprobante.length);
-            document.getElementById("tipoComprobante").value = tipoDeComprobante;
-
-            document.getElementById("cuit").value = datosComprobante.cuit;
-            document.getElementById("nroAutorizacion").value = datosComprobante.codAut;
-            document.getElementById("moneda").value = datosComprobante.moneda.toUpperCase();
-            document.getElementById("cotizacion").value = datosComprobante.ctz;
-            document.getElementById("importe").value = datosComprobante.importe;
+            inputTipoComprobante.value = tipoDeComprobante;
+            inputCuit.value = datosComprobante.cuit;
+            inputNroAutorizacion.value = datosComprobante.codAut;
+            inputMoneda.value = datosComprobante.moneda.toUpperCase();
+            inputCotizacion.value = datosComprobante.ctz;
+            inputImporte.value = datosComprobante.importe;
 
         } else {
-            console.log(result.message);
             document.getElementById("resultado").value = result.message;
         }
     }
@@ -198,12 +195,12 @@ function validarNroComprobante(p){
         let puntoventa = "00000" + nroSeparado[0];
         let numero = "00000000" + nroSeparado[1];
         document.getElementById(p).value = puntoventa.substring(puntoventa.length - 5, puntoventa.length) + numero.substring(numero.length - 8, numero.length)
-        document.getElementById(p).style.color = "black";
+        inputNumeroComprobante.classList.replace("is-invalid","is-valid");
     } else if (nroComprobante.length !== 13) {
-        document.getElementById(p).style.color = "red";
         alert("El numero ingresado debe tener 13 caracteres.");    
+        inputNumeroComprobante.classList.replace("is-valid","is-invalid");
     } else {
-        document.getElementById(p).style.color = "black";
+        inputNumeroComprobante.classList.replace("is-invalid","is-valid");
     }
 }
 

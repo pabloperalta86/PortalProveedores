@@ -9,7 +9,7 @@ function cargarTabla(){
                     '<td>' + item.numeroComprobante + '</td>' +
                     '<td>' + item.fechaComprobante + '</td>' +
                     '<td>' + item.cuit + '</td>' +
-                    '<td>' + item.tipoComprobante + '</td>' +
+                    '<td>' + buscarNombreComprobante(item.tipoComprobante) + '</td>' +
                     '<td>' + item.moneda + '</td>' +
                     '<td>' + item.importe + '</td>' +
                     `<td indice="${index}" class="eliminar">Borrar</td>` +
@@ -19,6 +19,11 @@ function cargarTabla(){
     for (item of borrarItem) {
         item.addEventListener("click", eliminarItem);
     }
+}
+
+function buscarNombreComprobante(id){
+    const tipoComp = tiposComprobantesAfip.find((e) => e.codigo === id);
+    return tipoComp.descripcion;
 }
 
 function eliminarItem(e) {
