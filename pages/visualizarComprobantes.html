@@ -10,7 +10,7 @@
 </head>
 <body class="body">
     <header class="encabezado">
-        <nav class="navbar w-100 navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar w-100 navbar-expand-lg navbar-dark">
             <div class="container-fluid">
                 <div class="contenedor">
                     <a class="navbar-brand" href="../index.html">
@@ -23,10 +23,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link mx-3" href="../index.html">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-3" href="cargarComprobante.html">Cargar Comprobantes</a>
+                            <a class="nav-link mx-3" href="../index.html">Cargar Comprobantes</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active mx-3" aria-current="page" href="visualizarComprobantes.html">Visualizar</a>
@@ -40,7 +37,7 @@
         </nav>
     </header>
     <main class="mainVisualizar">
-        <table id="tablaComprobantes">
+        <!-- <table id="tablaComprobantes">
             <thead>
                 <tr>
                     <th>Numero</th>
@@ -54,7 +51,51 @@
             </thead>
             <tbody id="bodyTablaComprobantes">
             </tbody>
-        </table>
+        </table> -->
+
+
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-offset-1 col-md-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col col-sm-3 col-xs-12">
+                                    <h4 class="title">Comprobantes</h4>
+                                </div>
+                                <div class="col-sm-9 col-xs-12 text-right">
+                                    <div class="btn_group">
+                                        <input type="text" class="form-control" placeholder="Buscar">
+                                        <button class="btn btn-default" title="Buscar">Buscar<i class="fa fa-sync-alt"></i></button>
+                                        <button class="btn btn-default" title="Excel">Exportar<i class="fas fa-file-excel"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table" id="tablaComprobantes">
+                                <thead>
+                                    <tr>
+                                        <th>Numero</th>
+                                        <th>Fecha</th>
+                                        <th>CUIT</th>
+                                        <th>Tipo</th>
+                                        <th>Moneda</th>
+                                        <th>Importe</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bodyTablaComprobantes">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
     </main>
 
     <footer class="footer"></footer>

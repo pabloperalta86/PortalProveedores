@@ -23,12 +23,14 @@ const inputImporte = document.getElementById("importe");
 fetch("../data/tipoComprobantes.json").then(response => response.json()).then(jsondata => {
     jsondata.forEach(function(item,index) {
         inputTipoComprobante.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+        inputTipoComprobante.value = "";
     });
 });
 
 fetch("../data/monedas.json").then(response => response.json()).then(jsondata => {
     jsondata.forEach(function(item,index) {
         inputMoneda.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
+        inputMoneda.value = "";
     });
 });
 
@@ -63,45 +65,20 @@ formulario.onsubmit = (event) =>{
             background: "linear-gradient(to right, #0071ff, #03525f)",
         }
     }).showToast();
+    limpiarFormulario();
 }
 
-inputCuit.oninput = () => {
-    let cuit = inputCuit.value;
-	if (cuit.length != 13 && cuit.length != 11) {
-        inputCuit.classList.replace("is-valid","is-invalid");
-        return 0;
-    }
-		
-	let cuitValido = false;
-	let resultado = 0;
-	let cuit_nro = cuit.replace("-", "");
-	let codigo = "6789456789";
-	let verificador = parseInt(cuit_nro[cuit_nro.length-1]);
-
-	for (let x= 0; x < 10; x++) {
-		let digitoValidador = parseInt(codigo.substring(x, x+1));
-		if (isNaN(digitoValidador)) digitoValidador = 0;
-		let digito = parseInt(cuit_nro.substring(x, x+1));
-		if (isNaN(digito)) digito = 0;
-		let digitoValidacion = digitoValidador * digito;
-		resultado += digitoValidacion;
-	}
-	
-    resultado = resultado % 11;
-	cuitValido = (resultado == verificador);
-	
-    if (cuitValido == false) {
-        inputCuit.classList.replace("is-valid","is-invalid");
-        return cuitValido;
-    } else {
-        if (cuit.length === 11){
-            console.log(inputCuit,"pepe")
-            cuit = cuit.substring(0,2) + "-" + cuit.substring(2, 10) + "-" + cuit.substring(10,11)
-            inputCuit.value = cuit
-        }
-        inputCuit.classList.replace("is-invalid","is-valid");
-    }
+inputCuit.onchange = () => {
+    validarCUIT(inputCuit.value)
 }
+
+inputFechaComprobante.onchange = () => { validarCampos(inputFechaComprobante) }
+inputTipoComprobante.onchange = () => { validarCampos(inputTipoComprobante) }
+inputMoneda.onchange = () => { validarCampos(inputMoneda) }
+inputCotizacion.onchange = () => { validarCampos(inputCotizacion) }
+inputImporte.onchange = () => { validarCampos(inputImporte) }
+inputNroAutorizacion.onchange = () => { validarCampos(inputNroAutorizacion) }
+
 
 inputNumeroComprobante.onchange = () => {
     let nroComprobante = inputNumeroComprobante.value;
@@ -119,6 +96,7 @@ inputNumeroComprobante.onchange = () => {
 }
 
 inputArchivo.onchange = () => {
+    limpiarFormulario();
     if (inputArchivo.files[0] !== undefined) {
         visorPdf.src = URL.createObjectURL(inputArchivo.files[0]);
         document.getElementById("resultado").value = "Escaneando codigo QR...";
@@ -148,17 +126,24 @@ inputArchivo.onchange = () => {
             let datosComprobante = JSON.parse(decodificadoB64);
 
             inputNumeroComprobante.value = datosComprobante.ptoVta + "-" + datosComprobante.nroCmp;
-            validarNroComprobante("numeroComprobante");
+            validarNroComprobante(inputNumeroComprobante);
             inputFechaComprobante.value = datosComprobante.fecha;
             let tipoDeComprobante = "000" + datosComprobante.tipoCmp;
             tipoDeComprobante = tipoDeComprobante.substring(tipoDeComprobante.length-3,tipoDeComprobante.length);
             inputTipoComprobante.value = tipoDeComprobante;
             inputCuit.value = datosComprobante.cuit;
+            validarCUIT(inputCuit.value);
             inputNroAutorizacion.value = datosComprobante.codAut;
             inputMoneda.value = datosComprobante.moneda.toUpperCase();
             inputCotizacion.value = datosComprobante.ctz;
             inputImporte.value = datosComprobante.importe;
-
+            validarCampos(inputFechaComprobante);
+            validarCampos(inputTipoComprobante);
+            validarCampos(inputMoneda);
+            validarCampos(inputCotizacion);
+            validarCampos(inputImporte);
+            validarCampos(inputNroAutorizacion);
+            
         } else {
             document.getElementById("resultado").value = result.message;
         }
@@ -189,13 +174,15 @@ inputArchivo.onchange = () => {
 // }
 
 function validarNroComprobante(p){
-    let nroComprobante = document.getElementById(p).value;
+    let nroComprobante = p.value;
     if (nroComprobante.includes("-")) {
         let nroSeparado = nroComprobante.split("-");
         let puntoventa = "00000" + nroSeparado[0];
         let numero = "00000000" + nroSeparado[1];
-        document.getElementById(p).value = puntoventa.substring(puntoventa.length - 5, puntoventa.length) + numero.substring(numero.length - 8, numero.length)
+        p.value = puntoventa.substring(puntoventa.length - 5, puntoventa.length) + numero.substring(numero.length - 8, numero.length)
         inputNumeroComprobante.classList.replace("is-invalid","is-valid");
+    } else if (nroComprobante.length === 0) {
+        inputNumeroComprobante.classList.replace("is-valid","is-invalid");
     } else if (nroComprobante.length !== 13) {
         alert("El numero ingresado debe tener 13 caracteres.");    
         inputNumeroComprobante.classList.replace("is-valid","is-invalid");
@@ -226,4 +213,69 @@ class Comprobante {
     this.cotizacion        = cotizacion;
     this.importe           = importe;
     }
+}
+
+function validarCUIT(cuit) {
+	if (cuit.length != 13 && cuit.length != 11) {
+        inputCuit.classList.replace("is-valid","is-invalid");
+        return 0;
+    }
+		
+	let cuitValido = false;
+	let resultado = 0;
+	let cuit_nro = cuit.replace("-", "");
+	let codigo = "6789456789";
+	let verificador = parseInt(cuit_nro[cuit_nro.length-1]);
+
+	for (let x= 0; x < 10; x++) {
+		let digitoValidador = parseInt(codigo.substring(x, x+1));
+		if (isNaN(digitoValidador)) digitoValidador = 0;
+		let digito = parseInt(cuit_nro.substring(x, x+1));
+		if (isNaN(digito)) digito = 0;
+		let digitoValidacion = digitoValidador * digito;
+		resultado += digitoValidacion;
+	}
+	
+    resultado = resultado % 11;
+	cuitValido = (resultado == verificador);
+	
+    if (cuitValido == false) {
+        inputCuit.classList.replace("is-valid","is-invalid");
+        return cuitValido;
+    } else {
+        if (cuit.length === 11){
+            cuit = cuit.substring(0,2) + "-" + cuit.substring(2, 10) + "-" + cuit.substring(10,11)
+            inputCuit.value = cuit
+        }
+        inputCuit.classList.replace("is-invalid","is-valid");
+    }
+}
+
+function validarCampos(campo){
+    if (campo.value !== "") {
+        campo.classList.replace("is-invalid","is-valid");
+    }else{
+        campo.classList.replace("is-valid","is-invalid");
+    }
+}
+
+function limpiarFormulario(){
+    inputNumeroComprobante.value = "";
+    inputCuit.value.value = "";
+    inputFechaComprobante.value = "";
+    inputTipoComprobante.value = "";
+    inputMoneda.value = "";
+    inputCotizacion.value = "";
+    inputImporte.value = "";
+    inputNroAutorizacion.value = "";
+    inputCuit.value = "";
+
+    validarNroComprobante(inputNumeroComprobante);
+    validarCUIT(inputCuit.value);
+    validarCampos(inputFechaComprobante);
+    validarCampos(inputTipoComprobante);
+    validarCampos(inputMoneda);
+    validarCampos(inputCotizacion);
+    validarCampos(inputImporte);
+    validarCampos(inputNroAutorizacion);
 }

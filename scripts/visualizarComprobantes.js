@@ -1,6 +1,5 @@
 const tablaComprobantes = document.getElementById("bodyTablaComprobantes");
 const comprobantesGuardados = JSON.parse(localStorage.getItem("comprobantesGuardados")) || [];
-
 cargarTabla();
 
 function cargarTabla(){
@@ -12,7 +11,7 @@ function cargarTabla(){
                     '<td>' + buscarNombreComprobante(item.tipoComprobante) + '</td>' +
                     '<td>' + item.moneda + '</td>' +
                     '<td>' + item.importe + '</td>' +
-                    `<td indice="${index}" class="eliminar">Borrar</td>` +
+                    `<td indice="${index}" class="eliminar"><img src="../images/borrador.png" alt="borrar" witdh="20px" height="20px"></td>` +
                     '</tr>'
     });
     const borrarItem = document.getElementsByClassName("eliminar");    

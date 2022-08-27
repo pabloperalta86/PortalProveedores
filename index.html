@@ -12,7 +12,7 @@
 
 <body class="body">
     <header class="encabezado">
-        <nav class="navbar w-100 navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar w-100 navbar-expand-lg navbar-dark">
             <div class="container-fluid">
                 <div class="contenedor">
                     <a class="navbar-brand" href="index.html">
@@ -25,10 +25,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active mx-3" aria-current="page" href="index.html">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link mx-3" href="./pages/cargarComprobante.html">Cargar Comprobantes</a>
+                            <a class="nav-link active mx-3" aria-current="page" href="index.html">Cargar Comprobantes</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link mx-3" href="./pages/visualizarComprobantes.html">Visualizar</a>
@@ -61,7 +58,7 @@
                     <select name="tipoComprobante" class="form-control is-invalid" id="tipoComprobante" required></select>
                 </div>
                 <div class="col-md-6">
-                    <label for="cuit" class="form-label">CUIT con formato xx-xxxxxxxx-x</label>
+                    <label for="cuit" class="form-label">CUIT (XX-XXXXXXXX-X)</label>
                     <input type="text" class="form-control is-invalid" id="cuit" value="" required>
                 </div>
                 <div class="col-md-6">
@@ -84,19 +81,19 @@
                 <textarea name="resultado" id="resultado" cols="75" rows="6"></textarea>
                 <textarea name="resultadoDecodificado" id="resultadoDecodificado" cols="75" rows="6"></textarea>
                 
-                <div class="col-6">
-                    <button class="btn btn-primary" type="submit" id="guardar">Guardar</button>
+                <div class="col-12 mt-5">
+                    <button class="btn btn-primary m-auto d-flex" type="submit" id="guardar">Guardar</button>
                 </div>
                 
             </form> 
         </div>
         <div class="embedPdf">
-            <embed id="visorPdf" src="" type="application/pdf" width="98%" height="700px">
+            <embed id="visorPdf" src="" type="application/pdf" width="95%" height="100%">
         </div>
 
     </main>
 
-    <footer class="footer">PIE DE PAGINA</footer>    
+    <!-- <footer class="footer">PIE DE PAGINA</footer>     -->
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script type="text/javascript" src="./scripts/js/jsQR.js"></script>
