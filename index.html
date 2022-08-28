@@ -44,38 +44,38 @@
             <h1>Portal Proveedores</h1>
             <hr>
             <form id="formulario" class="row g-2">
-                <input id="archivo" type="file" name="adjunto" accept=".pdf,.jpg,.png" multiple>
+                <input id="archivo" type="file" name="adjunto" accept=".pdf,.jpg,.png" required>
                 <div class="col-md-6">
                     <label for="numeroComprobante" class="form-label">Número de comprobante</label>
-                    <input type="text" class="form-control is-invalid" id="numeroComprobante" value="" required>
+                    <input type="text" class="form-control is-invalid" id="numeroComprobante" value="">
                 </div>
                 <div class="col-md-6">
                     <label for="fechaComprobante" class="form-label">Fecha Emisión</label>
-                    <input type="text" class="form-control is-invalid" id="fechaComprobante" value="" required>
+                    <input type="text" class="form-control is-invalid" id="fechaComprobante" value="">
                 </div>
                 <div class="col-md-12">
                     <label for="tipoComprobante" class="form-label">Tipo Comprobante</label>
-                    <select name="tipoComprobante" class="form-control is-invalid" id="tipoComprobante" required></select>
+                    <select name="tipoComprobante" class="form-control is-invalid" id="tipoComprobante"></select>
                 </div>
                 <div class="col-md-6">
                     <label for="cuit" class="form-label">CUIT (XX-XXXXXXXX-X)</label>
-                    <input type="text" class="form-control is-invalid" id="cuit" value="" required>
+                    <input type="text" class="form-control is-invalid" id="cuit" value="">
                 </div>
                 <div class="col-md-6">
                     <label for="nroAutorizacion" class="form-label">Número de Autorización</label>
-                    <input type="text" class="form-control is-invalid" id="nroAutorizacion" value="" required>
+                    <input type="text" class="form-control is-invalid" id="nroAutorizacion" value="">
                 </div>
                 <div class="col-md-12">
                     <label for="moneda" class="form-label">Moneda</label>
-                    <select name="moneda" class="form-control is-invalid" id="moneda" required></select>
+                    <select name="moneda" class="form-control is-invalid" id="moneda"></select>
                 </div>
                 <div class="col-md-6">
                     <label for="cotizacion" class="form-label">Cotización</label>
-                    <input type="number" step="0.01" class="form-control is-invalid" id="cotizacion" value="" required>
+                    <input type="number" step="0.01" class="form-control is-invalid" id="cotizacion" value="">
                 </div>
                 <div class="col-md-6">
                     <label for="importe" class="form-label">Importe</label>
-                    <input type="number" step="0.01" class="form-control is-invalid" id="importe" value="" required>
+                    <input type="number" step="0.01" class="form-control is-invalid" id="importe" value="">
                 </div>
                 
                 <textarea name="resultado" id="resultado" cols="75" rows="6"></textarea>
@@ -90,11 +90,8 @@
         <div class="embedPdf">
             <embed id="visorPdf" src="" type="application/pdf" width="95%" height="100%">
         </div>
-
     </main>
-
-    <!-- <footer class="footer">PIE DE PAGINA</footer>     -->
-
+    
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script type="text/javascript" src="./scripts/js/jsQR.js"></script>
     <script type="text/javascript" src="./scripts/js/pdf.worker.min.js"></script>

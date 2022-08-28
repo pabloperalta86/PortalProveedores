@@ -39,33 +39,58 @@ const comprobantesGuardados = JSON.parse(localStorage.getItem("comprobantesGuard
 formulario.onsubmit = (event) =>{
     event.preventDefault();
     
-    // falta funcion valida que esten todos los campos completos y con datos validos
+    let mensajeError = "";
+    
+    mensajeError += inputNumeroComprobante.classList[1] === "is-valid" ? "" : "Numero Comprobante\n";
+    mensajeError += inputFechaComprobante.classList[1] === "is-valid" ? "" : "Fecha Comprobante\n";
+    mensajeError += inputTipoComprobante.classList[1] === "is-valid" ? "" : "Tipo Comprobante\n";
+    mensajeError += inputCuit.classList[1] === "is-valid" ? "" : "CUIT\n";
+    mensajeError += inputNroAutorizacion.classList[1] === "is-valid" ? "" : "Numero Autorización\n";
+    mensajeError += inputMoneda.classList[1] === "is-valid" ? "" : "Moneda\n";
+    mensajeError += inputCotizacion.classList[1] === "is-valid" ? "" : "Cotización\n";
+    mensajeError += inputImporte.classList[1] === "is-valid" ? "" : "Importe\n";
 
-    const numeroComprobante = inputNumeroComprobante.value;
-    const fechaComprobante = inputFechaComprobante.value;
-    const tipoComprobante = inputTipoComprobante.value;
-    const cuit = inputCuit.value;
-    const nroAutorizacion = inputNroAutorizacion.value;
-    const moneda = inputMoneda.value;
-    const cotizacion = inputCotizacion.value;
-    const importe = inputImporte.value;
-    const nuevoComprobante = new Comprobante(numeroComprobante, fechaComprobante, tipoComprobante, cuit, nroAutorizacion, moneda, cotizacion, importe);
-    comprobantesGuardados.push(nuevoComprobante);
-    localStorage.setItem("comprobantesGuardados", JSON.stringify(comprobantesGuardados))
-    formulario.reset();
-    Toastify({
-        text: "El comprobante se guardo correctamente",
-        duration: 2500,
-        newWindow: true,
-        close: true,
-        gravity: "bottom", // `top` or `bottom`
-        position: "right", // `left`, `center` or `right`
-        stopOnFocus: true, // Prevents dismissing of toast on hover
-        style: {
-            background: "linear-gradient(to right, #0071ff, #03525f)",
-        }
-    }).showToast();
-    limpiarFormulario();
+    if(mensajeError === ""){
+        const numeroComprobante = inputNumeroComprobante.value;
+        const fechaComprobante = inputFechaComprobante.value;
+        const tipoComprobante = inputTipoComprobante.value;
+        const cuit = inputCuit.value;
+        const nroAutorizacion = inputNroAutorizacion.value;
+        const moneda = inputMoneda.value;
+        const cotizacion = inputCotizacion.value;
+        const importe = inputImporte.value;
+        const nuevoComprobante = new Comprobante(numeroComprobante, fechaComprobante, tipoComprobante, cuit, nroAutorizacion, moneda, cotizacion, importe);
+        comprobantesGuardados.push(nuevoComprobante);
+        localStorage.setItem("comprobantesGuardados", JSON.stringify(comprobantesGuardados))
+        formulario.reset();
+        Toastify({
+            text: "El comprobante se guardo correctamente",
+            duration: 2500,
+            newWindow: true,
+            close: true,
+            gravity: "bottom", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+                background: "linear-gradient(to right, #0071ff, #03525f)",
+            }
+        }).showToast();
+        limpiarFormulario();
+    }else{
+        mensajeError = "Faltan completar correctamente los siguientes campos: \n" + mensajeError;
+        Toastify({
+            text: mensajeError,
+            duration: 2500,
+            newWindow: true,
+            close: true,
+            gravity: "bottom", // `top` or `bottom`
+            position: "right", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: { 
+                background: "linear-gradient(to right, #e90437, #fb0505)",
+            }
+        }).showToast();
+    }
 }
 
 inputCuit.onchange = () => {
@@ -78,7 +103,6 @@ inputMoneda.onchange = () => { validarCampos(inputMoneda) }
 inputCotizacion.onchange = () => { validarCampos(inputCotizacion) }
 inputImporte.onchange = () => { validarCampos(inputImporte) }
 inputNroAutorizacion.onchange = () => { validarCampos(inputNroAutorizacion) }
-
 
 inputNumeroComprobante.onchange = () => {
     let nroComprobante = inputNumeroComprobante.value;
@@ -120,6 +144,7 @@ inputArchivo.onchange = () => {
     
     let callback = function (result) {
         if (result.success) {
+            if (result.codes[0] === undefined) return false;
             document.getElementById("resultado").value = result.codes[0].replace("https://www.afip.gob.ar/fe/qr/?p=","");
             let decodificadoB64 = atob(document.getElementById("resultado").value);
             document.getElementById("resultadoDecodificado").value = decodificadoB64;
@@ -152,26 +177,6 @@ inputArchivo.onchange = () => {
     PDF_QR_JS.decodeSinglePage(archivo, 1, configuraciones, callback);    
     
 };
-
-
-// api para leer qr desde una imagen
-// function cargarArchivo2(p,p1){
-//     document.getElementById(p).src = URL.createObjectURL(document.getElementById(p1).files[0]);
-//     let archivo = document.getElementById(p1).files[0]
-//     let formData = new FormData();
-//     formData.append('file', archivo);
-//     document.getElementById("resultado").innerText = "Scanning QR Code...";
-//     fetch("http://api.qrserver.com/v1/read-qr-code/", {
-//         method: 'POST', body: formData
-//     }).then(res => res.json()).then(result => {
-//         result = result[0].symbol[0].data;
-//         document.getElementById("resultado").innerText = result ? "Upload QR Code to Scan" : "Couldn't scan QR Code";
-//         if(!result) return;
-//         document.querySelector("textarea").innerText = result;
-//     }).catch(() => {
-//         infoText.innerText = "Couldn't scan QR Code";
-//     });
-// }
 
 function validarNroComprobante(p){
     let nroComprobante = p.value;
