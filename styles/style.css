@@ -27,6 +27,14 @@
     z-index: 100;
 }  
 
+#btnGuardar{
+    background: linear-gradient(to right, #2980b9, #2c3e50);
+}
+
+#btnIngresar{
+    background: linear-gradient(to right, #2980b9, #2c3e50);
+}
+
 main{
     margin-top: 60px;
 }
@@ -78,40 +86,14 @@ input, select{
     margin-right: auto; 
 }
 
-/* #tablaComprobantes {
-    grid-area: tabla;
-    width: 90%;
-    margin: 0 auto;
-    margin-top: 30px;
-    background-color: #619bf2;
-    border-collapse: collapse;
-    border-width: 2px;
-    border-color: #4119d1;
-    border-style: solid;
-    color: #ffffff;
-} */
-
-/* #tablaComprobantes td, #tablaComprobantes th {
-    border-width: 2px;
-    border-color: #43415a;
-    border-style: solid;
-    padding: 5px;
-}
-
-#tablaComprobantes thead {
-    background-color: #0d6efd;
-} */
-
 .eliminar{
     text-decoration: underline;
     text-align: center;
 }
 
-
 #resultadoDecodificado, #resultado{
     display: none;
 }
-
 
 .bd-placeholder-img {
     font-size: 1.125rem;
@@ -223,7 +205,7 @@ input, select{
 .boton{
     background: transparent;
     border: none;
-    margin-right: 20px;
+    margin: 0px 10px;
 }
 
 .panel .panel-heading .btn{
@@ -393,6 +375,22 @@ input, select{
     }
 
     .panel .panel-heading .btn_group{ text-align: center; }
+
+    .mainIndex {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas: "datos" 
+                            "pdf";
+    }
+
+    .embedPdf{
+        height: 600px;
+        margin-top: 15px;
+    }
+
+    .visorPdf{
+        margin: auto;
+    }
 }
 
 
