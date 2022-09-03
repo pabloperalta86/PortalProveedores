@@ -30,14 +30,14 @@ cerrarSesion.onclick = () => {
     sessionStorage.removeItem("usuarioActivo");
 }
 
-fetch("../data/tipoComprobantes.json").then(response => response.json()).then(jsondata => {
+fetch("./data/tipoComprobantes.json").then(response => response.json()).then(jsondata => {
     jsondata.forEach(function(item,index) {
         inputTipoComprobante.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
         inputTipoComprobante.value = "";
     });
 });
 
-fetch("../data/monedas.json").then(response => response.json()).then(jsondata => {
+fetch("./data/monedas.json").then(response => response.json()).then(jsondata => {
     jsondata.forEach(function(item,index) {
         inputMoneda.innerHTML += '<option value="' + item.codigo + '">' + item.descripcion + '</option>';
         inputMoneda.value = "";
@@ -73,6 +73,10 @@ formulario.onsubmit = (event) =>{
         comprobantesGuardados.push(nuevoComprobante);
         localStorage.setItem("comprobantesGuardados", JSON.stringify(comprobantesGuardados))
         formulario.reset();
+        visorPdf.src = "";
+        visorImagen.src = "";
+        visorPdf.style.display = "none";
+        visorImagen.style.display = "none";
         Toastify({
             text: "El comprobante se guardo correctamente",
             duration: 2500,
@@ -314,6 +318,7 @@ function validarCampos(campo){
 }
 
 function limpiarFormulario(){
+
     inputNumeroComprobante.value = "";
     inputCuit.value.value = "";
     inputFechaComprobante.value = "";

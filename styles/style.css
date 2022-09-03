@@ -396,10 +396,12 @@ input, select{
     margin: auto;
     width: 95%; 
     height: 100%;
+    display: none;
 }
 
 #visorImagen{
     margin: auto;
     width: 95%;
     overflow-y: scroll;
+    display: none;
 }
