@@ -1,6 +1,16 @@
+if (sessionStorage.getItem("usuarioActivo") != "true") 
+    window.location.href = "../pages/iniciarSesion.html"
+else
+    document.querySelector(".body").style.display = "grid";
+
 const tablaComprobantes = document.getElementById("bodyTablaComprobantes");
 const botonBuscar = document.getElementById("botonBuscar");
 const textoBuscar = document.getElementById("textoBuscar");
+const cerrarSesion = document.getElementById("cerrarSesion");
+
+cerrarSesion.onclick = () => {
+    sessionStorage.removeItem("usuarioActivo");
+}
 
 const comprobantesGuardados = JSON.parse(localStorage.getItem("comprobantesGuardados")) || [];
 cargarTabla(comprobantesGuardados);
@@ -37,7 +47,7 @@ function eliminarItem(e) {
     comprobantesGuardados.splice(indiceBorrar, 1);
     localStorage.removeItem("comprobantesGuardados");
     localStorage.setItem("comprobantesGuardados", JSON.stringify(comprobantesGuardados));
-    cargarTabla(comprobantesGuardados);
+    buscar();
 }
 
 function buscar(){

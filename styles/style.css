@@ -4,7 +4,7 @@
 }
 
 .body {
-    display: grid;
+    display: none;
     grid-template-columns: 2fr 3fr;
     grid-template-rows: auto 1fr auto;
     grid-template-areas: "encabezado encabezado" 
@@ -45,10 +45,6 @@ input, select{
 
 #cotizacion{
     margin-bottom: 10px;
-}
-
-.visorPdf{
-    margin: auto;
 }
 
 .mainIndex {
@@ -384,13 +380,26 @@ input, select{
     }
 
     .embedPdf{
-        height: 600px;
+        height: 630px;
         margin-top: 15px;
     }
 
-    .visorPdf{
-        margin: auto;
-    }
 }
 
+.embedPdf{
+    height: 630px;
+    margin-top: 15px;
+    overflow-y: scroll;
+}
 
+#visorPdf{
+    margin: auto;
+    width: 95%; 
+    height: 100%;
+}
+
+#visorImagen{
+    margin: auto;
+    width: 95%;
+    overflow-y: scroll;
+}

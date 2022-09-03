@@ -1,4 +1,7 @@
-if (sessionStorage.getItem("usuarioActivo") != "true") window.location.href = "./pages/iniciarSesion.html"
+if (sessionStorage.getItem("usuarioActivo") != "true") 
+    window.location.href = "./pages/iniciarSesion.html"
+else
+    document.querySelector(".body").style.display = "grid";
 
 const nuevoLogin = {usuario:"pperalta",contrasenia:"123"}
 const storageLoginPortal = [];
@@ -15,10 +18,17 @@ const inputVerGuardados = document.getElementById("verGuardados");
 const inputTipoComprobante = document.getElementById("tipoComprobante");
 const inputMoneda = document.getElementById("moneda");
 const visorPdf = document.getElementById("visorPdf");
+const visorImagen = document.getElementById("visorImagen");
 const inputNroAutorizacion = document.getElementById("nroAutorizacion");
 const inputCotizacion = document.getElementById("cotizacion");
 const inputImporte = document.getElementById("importe");
-
+const cerrarSesion = document.getElementById("cerrarSesion");
+const resultado = document.getElementById("resultado")
+const resultadoDecodificado = document.getElementById("resultadoDecodificado")
+            
+cerrarSesion.onclick = () => {
+    sessionStorage.removeItem("usuarioActivo");
+}
 
 fetch("../data/tipoComprobantes.json").then(response => response.json()).then(jsondata => {
     jsondata.forEach(function(item,index) {
@@ -122,61 +132,100 @@ inputNumeroComprobante.onchange = () => {
 inputArchivo.onchange = () => {
     limpiarFormulario();
     if (inputArchivo.files[0] !== undefined) {
-        visorPdf.src = URL.createObjectURL(inputArchivo.files[0]);
-        document.getElementById("resultado").value = "Escaneando codigo QR...";
+        let archivo = inputArchivo.files[0];
+        if (inputArchivo.files[0].type === "image/png" || inputArchivo.files[0].type === "image/jpg") {
+            visorImagen.src = URL.createObjectURL(inputArchivo.files[0]);
+            visorImagen.style.display = "grid";
+            visorPdf.style.display = "none";
+            let formData = new FormData();
+            formData.append('file', archivo);
+            resultado.innerText = "Escaneando codigo QR";
+            fetch("http://api.qrserver.com/v1/read-qr-code/", {
+                method: 'POST', 
+                body: formData
+            }).then(res => res.json()).then(result => {
+                result = result[0].symbol[0].data;
+                if(result) {
+                    resultado.value = result.replace("https://www.afip.gob.ar/fe/qr/?p=","");
+                    let decodificadoB64 = atob(resultado.value);
+                    resultadoDecodificado.value = decodificadoB64;
+                    let datosComprobante = JSON.parse(decodificadoB64);
+                    inputNumeroComprobante.value = datosComprobante.ptoVta + "-" + datosComprobante.nroCmp;
+                    validarNroComprobante(inputNumeroComprobante);
+                    inputFechaComprobante.value = datosComprobante.fecha;
+                    let tipoDeComprobante = "000" + datosComprobante.tipoCmp;
+                    tipoDeComprobante = tipoDeComprobante.substring(tipoDeComprobante.length-3,tipoDeComprobante.length);
+                    inputTipoComprobante.value = tipoDeComprobante;
+                    inputCuit.value = datosComprobante.cuit;
+                    validarCUIT(inputCuit.value);
+                    inputNroAutorizacion.value = datosComprobante.codAut;
+                    inputMoneda.value = datosComprobante.moneda.toUpperCase();
+                    inputCotizacion.value = datosComprobante.ctz;
+                    inputImporte.value = datosComprobante.importe;
+                    validarCampos(inputFechaComprobante);
+                    validarCampos(inputTipoComprobante);
+                    validarCampos(inputMoneda);
+                    validarCampos(inputCotizacion);
+                    validarCampos(inputImporte);
+                    validarCampos(inputNroAutorizacion);                    
+                } else {
+                    return
+                }  
+            }).catch(() => {
+                resultado.value = "No se pudo leer el codigo QR";
+            });    
+        } else if (inputArchivo.files[0].type === "application/pdf") {
+            visorPdf.src = URL.createObjectURL(inputArchivo.files[0]);
+            visorImagen.style.display = "none";
+            visorPdf.style.display = "grid";
+            let configuraciones = {
+                scale: {
+                    once: true,
+                    value: 6
+                },
+                resultOpts: {
+                    singleCodeInPage: true
+                },
+                improve: true,
+                jsQR: {}
+            };
+            let archivo2 = URL.createObjectURL(inputArchivo.files[0]);
+            let callback = function (result) {
+                if (result.success) {
+                    if (result.codes[0] === undefined) return false;
+                    resultado.value = result.codes[0].replace("https://www.afip.gob.ar/fe/qr/?p=","");
+                    let decodificadoB64 = atob(document.getElementById("resultado").value);
+                    resultadoDecodificado.value = decodificadoB64;
+                    let datosComprobante = JSON.parse(decodificadoB64);
+                    inputNumeroComprobante.value = datosComprobante.ptoVta + "-" + datosComprobante.nroCmp;
+                    validarNroComprobante(inputNumeroComprobante);
+                    inputFechaComprobante.value = datosComprobante.fecha;
+                    let tipoDeComprobante = "000" + datosComprobante.tipoCmp;
+                    tipoDeComprobante = tipoDeComprobante.substring(tipoDeComprobante.length-3,tipoDeComprobante.length);
+                    inputTipoComprobante.value = tipoDeComprobante;
+                    inputCuit.value = datosComprobante.cuit;
+                    validarCUIT(inputCuit.value);
+                    inputNroAutorizacion.value = datosComprobante.codAut;
+                    inputMoneda.value = datosComprobante.moneda.toUpperCase();
+                    inputCotizacion.value = datosComprobante.ctz;
+                    inputImporte.value = datosComprobante.importe;
+                    validarCampos(inputFechaComprobante);
+                    validarCampos(inputTipoComprobante);
+                    validarCampos(inputMoneda);
+                    validarCampos(inputCotizacion);
+                    validarCampos(inputImporte);
+                    validarCampos(inputNroAutorizacion);                    
+                }
+            }            
+            PDF_QR_JS.decodeSinglePage(archivo2, 1, configuraciones, callback);
+        } else {
+            swal("Error", "Solo se aceptan los siguientes tipos de archivo: jpg, pdf y png");
+            return;
+        }
     } else {
         return;
     }
-
-    let configuraciones = {
-        scale: {
-            once: true,
-            value: 5
-        },
-        resultOpts: {
-            singleCodeInPage: true
-        },
-        improve: true,
-        jsQR: {}
-    };
-    
-    let archivo = visorPdf.src;
-    
-    let callback = function (result) {
-        if (result.success) {
-            if (result.codes[0] === undefined) return false;
-            document.getElementById("resultado").value = result.codes[0].replace("https://www.afip.gob.ar/fe/qr/?p=","");
-            let decodificadoB64 = atob(document.getElementById("resultado").value);
-            document.getElementById("resultadoDecodificado").value = decodificadoB64;
-            let datosComprobante = JSON.parse(decodificadoB64);
-
-            inputNumeroComprobante.value = datosComprobante.ptoVta + "-" + datosComprobante.nroCmp;
-            validarNroComprobante(inputNumeroComprobante);
-            inputFechaComprobante.value = datosComprobante.fecha;
-            let tipoDeComprobante = "000" + datosComprobante.tipoCmp;
-            tipoDeComprobante = tipoDeComprobante.substring(tipoDeComprobante.length-3,tipoDeComprobante.length);
-            inputTipoComprobante.value = tipoDeComprobante;
-            inputCuit.value = datosComprobante.cuit;
-            validarCUIT(inputCuit.value);
-            inputNroAutorizacion.value = datosComprobante.codAut;
-            inputMoneda.value = datosComprobante.moneda.toUpperCase();
-            inputCotizacion.value = datosComprobante.ctz;
-            inputImporte.value = datosComprobante.importe;
-            validarCampos(inputFechaComprobante);
-            validarCampos(inputTipoComprobante);
-            validarCampos(inputMoneda);
-            validarCampos(inputCotizacion);
-            validarCampos(inputImporte);
-            validarCampos(inputNroAutorizacion);
-            
-        } else {
-            document.getElementById("resultado").value = result.message;
-        }
-    }
-    
-    PDF_QR_JS.decodeSinglePage(archivo, 1, configuraciones, callback);    
-    
-};
+}
 
 function validarNroComprobante(p){
     let nroComprobante = p.value;
@@ -189,7 +238,7 @@ function validarNroComprobante(p){
     } else if (nroComprobante.length === 0) {
         inputNumeroComprobante.classList.replace("is-valid","is-invalid");
     } else if (nroComprobante.length !== 13) {
-        alert("El numero ingresado debe tener 13 caracteres.");    
+        swal("Error", "El numero ingresado debe tener 13 caracteres.");    
         inputNumeroComprobante.classList.replace("is-valid","is-invalid");
     } else {
         inputNumeroComprobante.classList.replace("is-invalid","is-valid");
